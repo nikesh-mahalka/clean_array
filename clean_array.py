@@ -85,7 +85,16 @@ class DotHillClient(object):
 
     def create_pool(self):
         pool_name = os.environ['POOL_NAME']
-        path = "/create/vdisk/level/raid1/disks/0.5,0.9/assigned-to/b/mode/online/%s" % pool_name
+        disk_slots = os.environ['DISK_SLOTS']
+        controller = os.environ['CONTROLLER']
+        raid_level = os.environ['RAID_LEVEL']
+        path = ("/create/vdisk/level/%(raid_level)s/disks/%(disk_slots)s/assign"
+                "ed-to/%(controller)s/mode/online/%(pool_name)s" %
+                {'raid_level': raid_level,
+                 'disk_slots': disk_slots,
+                 'controller': controller,
+                 'pool_name': pool_name, })
+        print "path is %s" % path
         tree = self._request(path)
 
 if __name__ == "__main__":
