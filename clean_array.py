@@ -44,6 +44,7 @@ class DotHillClient(object):
 
         url = self._base_url + "/login/" + digest
         xml = urllib2.urlopen(url).read()
+        self._get_auth_token(xml)
 
     def _build_request_url(self, path, *args, **kargs):
         url = self._base_url + path
@@ -80,9 +81,13 @@ class DotHillClient(object):
             return False 
     def delete_volumes(self):
         pool_name = os.environ['POOL_NAME']
-        path = "/show/volumes/vdisk/%s" % pool_name
+        path = "/show/volumes/type/all/vdisk/%s" % pool_name
         tree = self._request(path)
         tree = [prop.text for prop in tree.xpath(".//PROPERTY[@name='serial-number']")]
+        path = "/show/snap-pools/pool/%s" % pool_name
+        snap_tree = self._request(path)
+        snap_tree = [prop.text for prop in snap_tree.xpath(".//PROPERTY[@name='serial-number']")]
+	tree = tree + snap_tree
         list_loop = True
         while list_loop:
             if len(tree) >50:
