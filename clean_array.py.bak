@@ -87,7 +87,7 @@ class DotHillClient(object):
         path = "/show/snap-pools/pool/%s" % pool_name
         snap_tree = self._request(path)
         snap_tree = [prop.text for prop in snap_tree.xpath(".//PROPERTY[@name='serial-number']")]
-		tree = tree + snap_tree
+        tree = tree + snap_tree
         list_loop = True
         while list_loop:
             if len(tree) >50:

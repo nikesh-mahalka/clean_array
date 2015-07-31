@@ -118,7 +118,7 @@ class DotHillClient(object):
         tree = self._request(path)
 
 if __name__ == "__main__":
-	ip = os.environ['ARRAY_IP']
+    ip = os.environ['ARRAY_IP']
     req_client = DotHillClient(ip, 'manage', '!manage', 'http')
     req_client.login()
     req_client.delete_volumes()
