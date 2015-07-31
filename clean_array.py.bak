@@ -87,7 +87,7 @@ class DotHillClient(object):
         path = "/show/snap-pools/pool/%s" % pool_name
         snap_tree = self._request(path)
         snap_tree = [prop.text for prop in snap_tree.xpath(".//PROPERTY[@name='serial-number']")]
-	tree = tree + snap_tree
+		tree = tree + snap_tree
         list_loop = True
         while list_loop:
             if len(tree) >50:
@@ -118,7 +118,8 @@ class DotHillClient(object):
         tree = self._request(path)
 
 if __name__ == "__main__":
-    req_client = DotHillClient('172.16.2.100', 'manage', '!manage', 'http')
+	ip = os.environ['ARRAY_IP']
+    req_client = DotHillClient(ip, 'manage', '!manage', 'http')
     req_client.login()
     req_client.delete_volumes()
     #req_client.delete_pool()
