@@ -1,5 +1,2 @@
 export POOL_NAME='dg03'
-export DISK_SLOTS='0.5,0.9'
-export CONTROLLER='b'
-export RAID_LEVEL='raid1'
 export ARRAY_IP='10.135.192.103'

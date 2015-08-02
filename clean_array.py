@@ -87,7 +87,10 @@ class DotHillClient(object):
         path = "/show/snap-pools/pool/%s" % pool_name
         snap_tree = self._request(path)
         snap_tree = [prop.text for prop in snap_tree.xpath(".//PROPERTY[@name='serial-number']")]
-        tree = tree + snap_tree
+        path = "/show/snapshots/pool/%s" % pool_name
+        snapshots = self._request(path)
+        snapshots = [prop.text for prop in snapshots.xpath(".//PROPERTY[@name='serial-number']")]
+        tree = snapshots + tree + snap_tree
         list_loop = True
         while list_loop:
             if len(tree) >50:
@@ -99,29 +102,10 @@ class DotHillClient(object):
             path = "/delete/volumes/%s"  % ",".join(t1)
             tree_3 = self._request(path)
         
-    def delete_pool(self):
-        pool_name = os.environ['POOL_NAME']
-        path = "/delete/vdisks/prompt/yes/%s" % pool_name
-        tree = self._request(path)
-
-    def create_pool(self):
-        pool_name = os.environ['POOL_NAME']
-        disk_slots = os.environ['DISK_SLOTS']
-        controller = os.environ['CONTROLLER']
-        raid_level = os.environ['RAID_LEVEL']
-        path = ("/create/vdisk/level/%(raid_level)s/disks/%(disk_slots)s/assign"
-                "ed-to/%(controller)s/mode/online/%(pool_name)s" %
-                {'raid_level': raid_level,
-                 'disk_slots': disk_slots,
-                 'controller': controller,
-                 'pool_name': pool_name, })
-        tree = self._request(path)
 
 if __name__ == "__main__":
     ip = os.environ['ARRAY_IP']
     req_client = DotHillClient(ip, 'manage', '!manage', 'http')
     req_client.login()
     req_client.delete_volumes()
-    #req_client.delete_pool()
-    #req_client.create_pool()
     req_client.logout()
