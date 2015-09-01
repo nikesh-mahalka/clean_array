@@ -33,9 +33,12 @@ class DotHillClient(object):
     def _get_auth_token(self, xml):
         """Parse an XML authentication reply to extract the session key."""
         self._session_key = None
-        tree = etree.XML(xml)
-        if tree.findtext(".//PROPERTY[@name='response-type']") == "success":
-            self._session_key = tree.findtext(".//PROPERTY[@name='response']")
+        try:
+            tree = etree.XML(xml)
+            if tree.findtext(".//PROPERTY[@name='response-type']") == "success":
+                self._session_key = tree.findtext(".//PROPERTY[@name='response']")
+        except Exception:
+            pass
 
     def login(self):
         """Authenticates the service on the device."""
@@ -65,12 +68,16 @@ class DotHillClient(object):
         "
 
         """
-        url = self._build_request_url(path, *args, **kargs)
-        headers = {'dataType': 'api', 'sessionKey': self._session_key}
-        req = urllib2.Request(url, headers=headers)
-        xml = urllib2.urlopen(req).read()
-        tree = etree.XML(xml)
-        return tree
+        try:
+            url = self._build_request_url(path, *args, **kargs)
+            headers = {'dataType': 'api', 'sessionKey': self._session_key}
+            req = urllib2.Request(url, headers=headers)
+            xml = urllib2.urlopen(req).read()
+            tree = etree.XML(xml)
+            return tree
+        except Exception:
+            pass
+
 
     def logout(self):
         url = self._base_url + '/exit'
