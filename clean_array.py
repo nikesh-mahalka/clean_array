@@ -87,32 +87,38 @@ class DotHillClient(object):
         except Exception:
             return False 
     def delete_volumes(self):
-        pool_name = os.environ['POOL_NAME']
-        path = "/show/volumes/type/all/vdisk/%s" % pool_name
-        tree = self._request(path)
-        tree = [prop.text for prop in tree.xpath(".//PROPERTY[@name='serial-number']")]
-        path = "/show/snap-pools/pool/%s" % pool_name
-        snap_tree = self._request(path)
-        snap_tree = [prop.text for prop in snap_tree.xpath(".//PROPERTY[@name='serial-number']")]
-        path = "/show/snapshots/pool/%s" % pool_name
-        snapshots = self._request(path)
-        snapshots = [prop.text for prop in snapshots.xpath(".//PROPERTY[@name='serial-number']")]
-        tree = snapshots + tree + snap_tree
-        list_loop = True
-        while list_loop:
-            if len(tree) >50:
-                t1 = tree[:50]
-                tree = tree[50:]
-            else:
-	        t1 = tree
-                list_loop = False
-            path = "/delete/volumes/%s"  % ",".join(t1)
-            tree_3 = self._request(path)
+        try:
+            pool_name = os.environ['POOL_NAME']
+            path = "/show/volumes/type/all/vdisk/%s" % pool_name
+            tree = self._request(path)
+            tree = [prop.text for prop in tree.xpath(".//PROPERTY[@name='serial-number']")]
+            path = "/show/snap-pools/pool/%s" % pool_name
+            snap_tree = self._request(path)
+            snap_tree = [prop.text for prop in snap_tree.xpath(".//PROPERTY[@name='serial-number']")]
+            path = "/show/snapshots/pool/%s" % pool_name
+            snapshots = self._request(path)
+            snapshots = [prop.text for prop in snapshots.xpath(".//PROPERTY[@name='serial-number']")]
+            tree = snapshots + tree + snap_tree
+            list_loop = True
+            while list_loop:
+                if len(tree) >50:
+                    t1 = tree[:50]
+                    tree = tree[50:]
+                else:
+    	            t1 = tree
+                    list_loop = False
+                path = "/delete/volumes/%s"  % ",".join(t1)
+                tree_3 = self._request(path)
+        except Exception:
+            pass
         
 
 if __name__ == "__main__":
-    ip = os.environ['ARRAY_IP']
-    req_client = DotHillClient(ip, 'manage', '!manage', 'http')
-    req_client.login()
-    req_client.delete_volumes()
-    req_client.logout()
+    try:
+        ip = os.environ['ARRAY_IP']
+        req_client = DotHillClient(ip, 'manage', '!manage', 'http')
+        req_client.login()
+        req_client.delete_volumes()
+        req_client.logout()
+    except Exception:
+        pass
